@@ -1,4 +1,4 @@
-export const DEFAULT_RESOURCES_ENDPOINT_PATH = 'agents/resources'
+export const DEFAULT_RESOURCES_ENDPOINT_PATH = 'api/agents/resources'
 
 export const DEFAULT_TIMEOUT_MS = process.env.PRIMERO_API_TIMEOUT_MS ?? 60_000
 

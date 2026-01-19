@@ -1,5 +1,5 @@
 import { NativeConnection, NativeConnectionOptions, Worker } from '@temporalio/worker'
-import { bundleWorkflows, loadActivitiesFrombundle } from '@primero-ai/temporal-graph-tools'
+import { bundleWorkflows, loadActivitiesFrombundle } from '@primero.ai/temporal-graph-tools'
 import { builderHelloWorld, builderOnboarding } from './bundle/workflows'
 
 export function getConnectionOptions(): NativeConnectionOptions {
