@@ -14,21 +14,23 @@
     "prepublishOnly": "pnpm run build",
     "clean": "rm -rf node_modules dist"
   },
-  ".": {
-    "types": "./dist/index.d.ts",
-    "import": "./dist/index.js"
-  },
-  "./resource-query/client": {
-    "types": "./dist/resource-query/client.d.ts",
-    "import": "./dist/resource-query/client.js"
-  },
-  "./resource-query/schemas": {
-    "types": "./dist/resource-query/schemas.d.ts",
-    "import": "./dist/resource-query/schemas.js"
-  },
-  "./resource-query/types": {
-    "types": "./dist/resource-query/types.d.ts",
-    "import": "./dist/resource-query/types.js"
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./resource-query/client": {
+      "types": "./dist/resource-query/client.d.ts",
+      "import": "./dist/resource-query/client.js"
+    },
+    "./resource-query/schemas": {
+      "types": "./dist/resource-query/schemas.d.ts",
+      "import": "./dist/resource-query/schemas.js"
+    },
+    "./resource-query/types": {
+      "types": "./dist/resource-query/types.d.ts",
+      "import": "./dist/resource-query/types.js"
+    }
   },
   "dependencies": {
     "axios": "^1.13.2",
@@ -53,12 +55,6 @@
   },
   "engines": {
     "node": ">=18"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
