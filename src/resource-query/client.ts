@@ -7,11 +7,7 @@ import {
   PRIMERO_TOKEN_SECRET,
 } from '../constants'
 import { ResourceQueryInputSchema, ResourceQueryResponseSchema } from './schemas'
-import type {
-  ResourceQueryClientOptions,
-  ResourceQueryInput,
-  ResourceQueryResponse,
-} from './types'
+import type { ResourceQueryClientOptions, ResourceQueryInput, ResourceQueryResponse } from './types'
 
 export class ResourceQueryClient {
   private readonly endpointUrl: string
@@ -45,9 +41,7 @@ export class ResourceQueryClient {
     const baseUrl = options.baseUrl ?? PRIMERO_BASE_URL
 
     if (!baseUrl) {
-      throw new Error(
-        'Missing base URL. Set PRIMERO_API_BASE_URL.',
-      )
+      throw new Error('Missing base URL. Set PRIMERO_API_BASE_URL.')
     }
 
     const endpointPath = DEFAULT_RESOURCES_ENDPOINT_PATH
