@@ -5,9 +5,13 @@ import {
   PRIMERO_BASE_URL,
   PRIMERO_TOKEN_ID,
   PRIMERO_TOKEN_SECRET,
-} from '../constants'
-import { ResourceQueryInputSchema, ResourceQueryResponseSchema } from './schemas'
-import type { ResourceQueryClientOptions, ResourceQueryInput, ResourceQueryResponse } from './types'
+} from '#constants'
+import { ResourceQueryInputSchema, ResourceQueryResponseSchema } from '#resource-query/schemas'
+import type {
+  ResourceQueryClientOptions,
+  ResourceQueryInput,
+  ResourceQueryResponse,
+} from '#resource-query/types'
 
 export class ResourceQueryClient {
   private readonly endpointUrl: string

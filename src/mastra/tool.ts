@@ -1,6 +1,10 @@
-import { ResourceQueryInputSchema } from '../resource-query/schemas'
-import type { ResourceQueryClientOptions, ResourceQueryInput, ResourceQueryResponse } from '../resource-query/types'
-import { ResourceQueryClient } from '../resource-query/client'
+import { ResourceQueryInputSchema } from '#resource-query/schemas'
+import type {
+  ResourceQueryClientOptions,
+  ResourceQueryInput,
+  ResourceQueryResponse,
+} from '#resource-query/types'
+import { ResourceQueryClient } from '#resource-query/client'
 
 const DEFAULT_MASTRA_RESOURCE_QUERY_TOOL_DESCRIPTION =
   'Query Primero resources by executing read-only SQL against the configured Primero API.'

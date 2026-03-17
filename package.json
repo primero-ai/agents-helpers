@@ -7,12 +7,39 @@
   "type": "module",
   "scripts": {
     "with-env": "dotenv -e .env --",
-    "build": "tsc --project tsconfig.json",
+    "build": "rm -rf dist && tsc --project tsconfig.json && pnpm run test:dist",
+    "test:dist": "node --test test/*.test.mjs",
     "type-check": "tsc --noEmit --project tsconfig.json",
     "lint": "eslint .",
     "format": "prettier --write .",
     "prepublishOnly": "pnpm run build",
     "clean": "rm -rf node_modules dist"
+  },
+  "imports": {
+    "#constants": {
+      "types": "./src/constants.ts",
+      "default": "./dist/constants.js"
+    },
+    "#mastra": {
+      "types": "./src/mastra/index.ts",
+      "default": "./dist/mastra/index.js"
+    },
+    "#mastra/tool": {
+      "types": "./src/mastra/tool.ts",
+      "default": "./dist/mastra/tool.js"
+    },
+    "#resource-query/client": {
+      "types": "./src/resource-query/client.ts",
+      "default": "./dist/resource-query/client.js"
+    },
+    "#resource-query/schemas": {
+      "types": "./src/resource-query/schemas.ts",
+      "default": "./dist/resource-query/schemas.js"
+    },
+    "#resource-query/types": {
+      "types": "./src/resource-query/types.ts",
+      "default": "./dist/resource-query/types.js"
+    }
   },
   "exports": {
     ".": {

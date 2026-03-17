@@ -1,2 +1,2 @@
-export * from './resource-query/client'
-export * from './mastra'
+export * from '#resource-query/client'
+export * from '#mastra'
