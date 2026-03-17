@@ -19,6 +19,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./mastra": {
+      "types": "./dist/mastra/index.d.ts",
+      "import": "./dist/mastra/index.js"
+    },
     "./resource-query/client": {
       "types": "./dist/resource-query/client.d.ts",
       "import": "./dist/resource-query/client.js"

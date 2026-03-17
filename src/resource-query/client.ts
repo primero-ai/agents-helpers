@@ -20,7 +20,9 @@ export class ResourceQueryClient {
     this.tokenId = options.tokenId ?? PRIMERO_TOKEN_ID
     this.tokenSecret = options.tokenSecret ?? PRIMERO_TOKEN_SECRET
 
-    this.http = axios.create({ timeout: Number(DEFAULT_TIMEOUT_MS) })
+    this.http = axios.create({
+      timeout: Number(options.timeoutMs ?? DEFAULT_TIMEOUT_MS),
+    })
   }
 
   async query<Row = Record<string, unknown>>(

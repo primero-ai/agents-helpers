@@ -1,7 +1,7 @@
 # @primero.ai/agents-helpers
 
 Utilities for Primero agents. Currently ships a typed Resource Query client for
-calling the Primero API.
+calling the Primero API, plus a Mastra-compatible tool adapter.
 
 ## Installation
 
@@ -34,6 +34,35 @@ const result = await client.query({
 console.log(result.rows)
 ```
 
+## Mastra
+
+Mastra can consume this package through an AI SDK-compatible tool factory. That
+keeps this package decoupled from Mastra internals while still letting a Mastra
+agent call Primero resources through the helper.
+
+```ts
+import { tool } from 'ai'
+import { Agent } from '@mastra/core/agent'
+import { openai } from '@ai-sdk/openai'
+import { createMastraResourceQueryTool } from '@primero.ai/agents-helpers/mastra'
+
+const primeroResourceQuery = createMastraResourceQueryTool({
+  toolFactory: tool,
+  baseUrl: process.env.PRIMERO_API_BASE_URL,
+  tokenId: process.env.PRIMERO_API_KEY_ID,
+  tokenSecret: process.env.PRIMERO_API_KEY_SECRET,
+})
+
+const agent = new Agent({
+  name: 'Primero Analyst',
+  instructions: 'Use primeroResourceQuery whenever you need Primero data.',
+  model: openai('gpt-4.1-mini'),
+  tools: {
+    primeroResourceQuery,
+  },
+})
+```
+
 ## Environment variables
 
 The client reads defaults from environment variables when options are omitted.
@@ -52,6 +81,7 @@ Options:
 - `baseUrl`: Base URL for the Primero API.
 - `tokenId`: API token id.
 - `tokenSecret`: API token secret.
+- `timeoutMs`: Request timeout in milliseconds.
 
 ### `client.query(input)`
 
@@ -62,9 +92,21 @@ Input:
 
 Returns `{ rows, rowCount?, columns? }`.
 
+### `createMastraResourceQueryTool(options)`
+
+Builds a Mastra-compatible tool by wrapping `ResourceQueryClient`.
+
+Options:
+
+- `toolFactory`: Usually `tool` from `ai`.
+- `description`: Optional tool description exposed to the model.
+- All `ResourceQueryClient` options: `baseUrl`, `tokenId`, `tokenSecret`,
+  `timeoutMs`.
+
 ## Example script
 
 ```bash
 pnpm install
 pnpm tsx example/resource-query.ts
+pnpm tsx example/mastra-resource-query.ts
 ```
