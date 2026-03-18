@@ -5,13 +5,16 @@ test('dist root entry imports successfully', async () => {
   const mod = await import('../dist/index.js')
 
   assert.equal(typeof mod.ResourceQueryClient, 'function')
+  assert.equal(typeof mod.ResourceOntologyClient, 'function')
   assert.equal(typeof mod.createMastraResourceQueryTool, 'function')
+  assert.equal(typeof mod.createMastraResourceOntologyTool, 'function')
 })
 
 test('dist mastra subpath imports successfully', async () => {
   const mod = await import('../dist/mastra/index.js')
 
   assert.equal(typeof mod.createMastraResourceQueryTool, 'function')
+  assert.equal(typeof mod.createMastraResourceOntologyTool, 'function')
 })
 
 test('dist resource-query subpath imports successfully', async () => {
@@ -20,14 +23,72 @@ test('dist resource-query subpath imports successfully', async () => {
   assert.equal(typeof mod.ResourceQueryClient, 'function')
 })
 
-test('mastra adapter returns a tool definition through the provided factory', async () => {
-  const { createMastraResourceQueryTool } = await import('../dist/mastra/index.js')
+test('dist resource-ontology subpath imports successfully', async () => {
+  const mod = await import('../dist/resource-ontology/client.js')
 
-  const tool = createMastraResourceQueryTool({
+  assert.equal(typeof mod.ResourceOntologyClient, 'function')
+})
+
+test('mastra adapter returns a tool definition through the provided factory', async () => {
+  const { createMastraResourceOntologyTool, createMastraResourceQueryTool } =
+    await import('../dist/mastra/index.js')
+
+  const queryTool = createMastraResourceQueryTool({
+    toolFactory: (definition) => definition,
+  })
+  const ontologyTool = createMastraResourceOntologyTool({
     toolFactory: (definition) => definition,
   })
 
-  assert.equal(typeof tool.description, 'string')
-  assert.equal(typeof tool.execute, 'function')
-  assert.deepEqual(tool.inputSchema.safeParse({ sql: 'select 1', limit: 1 }).success, true)
+  assert.equal(typeof queryTool.description, 'string')
+  assert.equal(typeof queryTool.execute, 'function')
+  assert.deepEqual(queryTool.inputSchema.safeParse({ sql: 'select 1', limit: 1 }).success, true)
+
+  assert.equal(typeof ontologyTool.description, 'string')
+  assert.equal(typeof ontologyTool.execute, 'function')
+  assert.deepEqual(ontologyTool.inputSchema.safeParse({}).success, true)
+})
+
+test('resource ontology schema parses the introspected resource payload', async () => {
+  const { ResourceOntologyResponseSchema } = await import('../dist/resource-ontology/schemas.js')
+
+  const parsed = ResourceOntologyResponseSchema.parse({
+    resourceId: 'resource-123',
+    schema: {
+      tables: [
+        {
+          name: 'users',
+          columns: [
+            {
+              name: 'id',
+              dataType: 'uuid',
+            },
+            {
+              name: 'profile',
+              dataType: 'jsonb',
+              jsonSchema: {
+                type: 'object',
+                properties: {
+                  email: { type: 'string' },
+                },
+              },
+            },
+          ],
+        },
+      ],
+      relations: [
+        {
+          sourceTable: 'users',
+          sourceColumns: ['id'],
+          targetTable: 'accounts',
+          targetColumns: ['user_id'],
+        },
+      ],
+    },
+    verified: true,
+    createdAt: '2026-03-18T00:00:00.000Z',
+  })
+
+  assert.equal(parsed.resourceId, 'resource-123')
+  assert.equal(parsed.schema.tables[0].name, 'users')
 })

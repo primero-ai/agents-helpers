@@ -39,6 +39,18 @@
     "#resource-query/types": {
       "types": "./src/resource-query/types.ts",
       "default": "./dist/resource-query/types.js"
+    },
+    "#resource-ontology/client": {
+      "types": "./src/resource-ontology/client.ts",
+      "default": "./dist/resource-ontology/client.js"
+    },
+    "#resource-ontology/schemas": {
+      "types": "./src/resource-ontology/schemas.ts",
+      "default": "./dist/resource-ontology/schemas.js"
+    },
+    "#resource-ontology/types": {
+      "types": "./src/resource-ontology/types.ts",
+      "default": "./dist/resource-ontology/types.js"
     }
   },
   "exports": {
@@ -61,6 +73,18 @@
     "./resource-query/types": {
       "types": "./dist/resource-query/types.d.ts",
       "import": "./dist/resource-query/types.js"
+    },
+    "./resource-ontology/client": {
+      "types": "./dist/resource-ontology/client.d.ts",
+      "import": "./dist/resource-ontology/client.js"
+    },
+    "./resource-ontology/schemas": {
+      "types": "./dist/resource-ontology/schemas.d.ts",
+      "import": "./dist/resource-ontology/schemas.js"
+    },
+    "./resource-ontology/types": {
+      "types": "./dist/resource-ontology/types.d.ts",
+      "import": "./dist/resource-ontology/types.js"
     }
   },
   "dependencies": {

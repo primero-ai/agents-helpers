@@ -1,7 +1,7 @@
 # @primero.ai/agents-helpers
 
-Utilities for Primero agents. Currently ships a typed Resource Query client for
-calling the Primero API, plus a Mastra-compatible tool adapter.
+Utilities for Primero agents. Currently ships typed clients for resource query
+and resource ontology endpoints, plus a Mastra-compatible tool adapter.
 
 ## Installation
 
@@ -34,6 +34,22 @@ const result = await client.query({
 console.log(result.rows)
 ```
 
+## Resource Ontology
+
+```ts
+import { ResourceOntologyClient } from '@primero.ai/agents-helpers'
+
+const client = new ResourceOntologyClient({
+  baseUrl: 'https://primero.ai/',
+  tokenId: process.env.PRIMERO_API_KEY_ID,
+  tokenSecret: process.env.PRIMERO_API_KEY_SECRET,
+})
+
+const ontology = await client.get()
+
+console.log(ontology)
+```
+
 ## Mastra
 
 Mastra can consume this package through an AI SDK-compatible tool factory. That
@@ -60,6 +76,20 @@ const agent = new Agent({
   tools: {
     primeroResourceQuery,
   },
+})
+```
+
+For the ontology endpoint:
+
+```ts
+import { tool } from 'ai'
+import { createMastraResourceOntologyTool } from '@primero.ai/agents-helpers/mastra'
+
+const primeroResourceOntology = createMastraResourceOntologyTool({
+  toolFactory: tool,
+  baseUrl: process.env.PRIMERO_API_BASE_URL,
+  tokenId: process.env.PRIMERO_API_KEY_ID,
+  tokenSecret: process.env.PRIMERO_API_KEY_SECRET,
 })
 ```
 
@@ -92,6 +122,19 @@ Input:
 
 Returns `{ rows, rowCount?, columns? }`.
 
+### `new ResourceOntologyClient(options?)`
+
+Options:
+
+- `baseUrl`: Base URL for the Primero API.
+- `tokenId`: API token id.
+- `tokenSecret`: API token secret.
+- `timeoutMs`: Request timeout in milliseconds.
+
+### `client.get()`
+
+Fetches resource ontology metadata from `api/resources/ontology`.
+
 ### `createMastraResourceQueryTool(options)`
 
 Builds a Mastra-compatible tool by wrapping `ResourceQueryClient`.
@@ -103,10 +146,23 @@ Options:
 - All `ResourceQueryClient` options: `baseUrl`, `tokenId`, `tokenSecret`,
   `timeoutMs`.
 
+### `createMastraResourceOntologyTool(options)`
+
+Builds a Mastra-compatible tool by wrapping `ResourceOntologyClient`.
+
+Options:
+
+- `toolFactory`: Usually `tool` from `ai`.
+- `description`: Optional tool description exposed to the model.
+- All `ResourceOntologyClient` options: `baseUrl`, `tokenId`, `tokenSecret`,
+  `timeoutMs`.
+
 ## Example script
 
 ```bash
 pnpm install
 pnpm tsx example/resource-query.ts
+pnpm tsx example/resource-ontology.ts
 pnpm tsx example/mastra-resource-query.ts
+pnpm tsx example/mastra-resource-ontology.ts
 ```

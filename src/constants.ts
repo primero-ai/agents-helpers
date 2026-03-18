@@ -1,4 +1,5 @@
-export const DEFAULT_RESOURCES_ENDPOINT_PATH = 'api/resources/query'
+export const DEFAULT_RESOURCES_ENDPOINT_PATH = '/api/resources/query'
+export const DEFAULT_RESOURCES_ONTOLOGY_ENDPOINT_PATH = '/api/resources/ontology'
 
 export const DEFAULT_TIMEOUT_MS = process.env.PRIMERO_API_TIMEOUT_MS ?? 60_000
 
