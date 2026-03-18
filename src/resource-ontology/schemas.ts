@@ -85,9 +85,4 @@ export const IntrospectedSchema = z.object({
   enums: z.array(IntrospectedEnum).optional().default([]),
 })
 
-export const ResourceOntologyResponseSchema = z.object({
-  resourceId: z.string(),
-  schema: IntrospectedSchema.nullable(),
-  verified: z.boolean(),
-  createdAt: z.string(),
-})
+export const ResourceOntologyResponseSchema = IntrospectedSchema

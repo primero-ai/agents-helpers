@@ -133,7 +133,7 @@ Options:
 
 ### `client.get()`
 
-Fetches resource ontology metadata from `api/resources/ontology`.
+Fetches the resource ontology from `api/resources/ontology`.
 
 ### `createMastraResourceQueryTool(options)`
 

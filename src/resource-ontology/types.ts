@@ -67,12 +67,7 @@ export type IntrospectedSchema = {
   enums?: IntrospectedEnum[]
 }
 
-export type ResourceOntologyResponse = {
-  resourceId: string
-  schema: IntrospectedSchema | null
-  verified: boolean
-  createdAt: string
-}
+export type ResourceOntologyResponse = IntrospectedSchema
 
 export type ResourceOntologyClientOptions = {
   baseUrl?: string

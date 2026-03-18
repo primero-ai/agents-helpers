@@ -53,42 +53,36 @@ test('resource ontology schema parses the introspected resource payload', async 
   const { ResourceOntologyResponseSchema } = await import('../dist/resource-ontology/schemas.js')
 
   const parsed = ResourceOntologyResponseSchema.parse({
-    resourceId: 'resource-123',
-    schema: {
-      tables: [
-        {
-          name: 'users',
-          columns: [
-            {
-              name: 'id',
-              dataType: 'uuid',
-            },
-            {
-              name: 'profile',
-              dataType: 'jsonb',
-              jsonSchema: {
-                type: 'object',
-                properties: {
-                  email: { type: 'string' },
-                },
+    tables: [
+      {
+        name: 'users',
+        columns: [
+          {
+            name: 'id',
+            dataType: 'uuid',
+          },
+          {
+            name: 'profile',
+            dataType: 'jsonb',
+            jsonSchema: {
+              type: 'object',
+              properties: {
+                email: { type: 'string' },
               },
             },
-          ],
-        },
-      ],
-      relations: [
-        {
-          sourceTable: 'users',
-          sourceColumns: ['id'],
-          targetTable: 'accounts',
-          targetColumns: ['user_id'],
-        },
-      ],
-    },
-    verified: true,
-    createdAt: '2026-03-18T00:00:00.000Z',
+          },
+        ],
+      },
+    ],
+    relations: [
+      {
+        sourceTable: 'users',
+        sourceColumns: ['id'],
+        targetTable: 'accounts',
+        targetColumns: ['user_id'],
+      },
+    ],
   })
 
-  assert.equal(parsed.resourceId, 'resource-123')
-  assert.equal(parsed.schema.tables[0].name, 'users')
+  assert.equal(parsed.tables[0].name, 'users')
 })
