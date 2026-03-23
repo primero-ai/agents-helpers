@@ -51,6 +51,18 @@
     "#resource-ontology/types": {
       "types": "./src/resource-ontology/types.ts",
       "default": "./dist/resource-ontology/types.js"
+    },
+    "#s3/client": {
+      "types": "./src/s3/client.ts",
+      "default": "./dist/s3/client.js"
+    },
+    "#s3/schemas": {
+      "types": "./src/s3/schemas.ts",
+      "default": "./dist/s3/schemas.js"
+    },
+    "#s3/types": {
+      "types": "./src/s3/types.ts",
+      "default": "./dist/s3/types.js"
     }
   },
   "exports": {
@@ -85,11 +97,24 @@
     "./resource-ontology/types": {
       "types": "./dist/resource-ontology/types.d.ts",
       "import": "./dist/resource-ontology/types.js"
+    },
+    "./s3/client": {
+      "types": "./dist/s3/client.d.ts",
+      "import": "./dist/s3/client.js"
+    },
+    "./s3/schemas": {
+      "types": "./dist/s3/schemas.d.ts",
+      "import": "./dist/s3/schemas.js"
+    },
+    "./s3/types": {
+      "types": "./dist/s3/types.d.ts",
+      "import": "./dist/s3/types.js"
     }
   },
   "dependencies": {
     "axios": "^1.13.5",
-    "zod": "4.3.6"
+    "zod": "4.3.6",
+    "@aws-sdk/client-s3": "^3.940.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

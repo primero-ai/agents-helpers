@@ -1,3 +1,6 @@
 export * from '#resource-query/client'
 export * from '#resource-ontology/client'
 export * from '#mastra'
+export * from '#s3/client'
+export * from '#s3/schemas'
+export * from '#s3/types'
