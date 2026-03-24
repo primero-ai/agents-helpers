@@ -4,6 +4,7 @@ import {
   S3Client,
   type GetObjectCommandOutput,
 } from '@aws-sdk/client-s3'
+import { z } from 'zod'
 import { PRIMERO_BASE_URL } from '#constants'
 import { GetS3FileInputSchema, PutS3FileInputSchema, S3StorageUriSchema } from '#s3/schemas'
 import type {
@@ -159,6 +160,67 @@ export function resolveS3ConsoleUrl(input: { bucketName: string; s3Key: string }
   const encodedS3Key = encodeURIComponent(input.s3Key)
 
   return `${PRIMERO_BASE_URL}/s3/object/${encodeURIComponent(input.bucketName)}/${encodedS3Key}`
+}
+
+export async function writeTextMessageToS3(
+  client: S3FileClient,
+  input: {
+    s3Key: string
+    text: string
+    bucketName?: string
+    contentType?: string
+    contentEncoding?: string
+    metadata?: Record<string, string>
+  },
+): Promise<PutS3FileResult> {
+  return client.putFile({
+    s3Key: input.s3Key,
+    bucketName: input.bucketName,
+    body: input.text,
+    contentType: input.contentType ?? 'application/json',
+    ...(typeof input.contentEncoding === 'string'
+      ? { contentEncoding: input.contentEncoding }
+      : {}),
+    ...(input.metadata ? { metadata: input.metadata } : {}),
+  })
+}
+
+export async function writeJsonMessageToS3(
+  client: S3FileClient,
+  input: {
+    s3Key: string
+    value: unknown
+    bucketName?: string
+    metadata?: Record<string, string>
+  },
+): Promise<PutS3FileResult> {
+  return writeTextMessageToS3(client, {
+    s3Key: input.s3Key,
+    bucketName: input.bucketName,
+    text: JSON.stringify(input.value),
+    contentType: 'application/json',
+    metadata: input.metadata,
+  })
+}
+
+export async function readTextMessageFromS3(
+  client: S3FileClient,
+  input: GetS3FileInput & { encoding?: BufferEncoding },
+): Promise<string> {
+  const result = await client.getFile(input)
+
+  return result.body.toString(input.encoding ?? 'utf8')
+}
+
+export async function readJsonMessageFromS3<TSchema extends z.ZodTypeAny>(
+  client: S3FileClient,
+  input: (GetS3FileInput & { schema: TSchema }) & { encoding?: BufferEncoding },
+): Promise<z.infer<TSchema>> {
+  const { schema } = input
+  const text = await readTextMessageFromS3(client, input)
+  const parsed = JSON.parse(text) as unknown
+
+  return schema.parse(parsed)
 }
 
 function resolveFileNameFromS3Key(s3Key: string): string | undefined {
