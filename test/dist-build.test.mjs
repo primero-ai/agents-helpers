@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { TextEncoder } from 'node:util'
 
 test('dist root entry imports successfully', async () => {
   const mod = await import('../dist/index.js')
@@ -11,6 +12,10 @@ test('dist root entry imports successfully', async () => {
   assert.equal(typeof mod.S3FileClient, 'function')
   assert.equal(typeof mod.parseS3StorageUri, 'function')
   assert.equal(typeof mod.toS3StorageUri, 'function')
+  assert.equal(typeof mod.createS3FileInputSchema, 'function')
+  assert.equal(typeof mod.createS3FilesInputSchema, 'function')
+  assert.equal(typeof mod.writeJsonMessageToS3, 'function')
+  assert.equal(typeof mod.readJsonMessageFromS3, 'function')
 })
 
 test('dist mastra subpath imports successfully', async () => {
@@ -59,8 +64,31 @@ test('parseS3StorageUri throws on invalid values', async () => {
   assert.throws(() => parseS3StorageUri('s3://missing-key'))
 })
 
+test('workflow-oriented S3 file schemas parse file inputs and references', async () => {
+  const { S3FileReferenceSchema, createS3FileInputSchema, createS3FilesInputSchema } = await import(
+    '../dist/s3/schemas.js'
+  )
+  const fileSchema = createS3FileInputSchema({ accept: '.xlsx' })
+  const filesSchema = createS3FilesInputSchema({ accept: '.xlsx' }).min(1)
+
+  assert.equal(fileSchema.safeParse('s3://bucket/template.xlsx').success, true)
+  assert.equal(filesSchema.safeParse(['s3://bucket/a.xlsx', 's3://bucket/b.xlsx']).success, true)
+  assert.equal(
+    S3FileReferenceSchema.safeParse({
+      bucketName: 'bucket-a',
+      s3Key: 'folder/file.xlsx',
+      storageUri: 's3://bucket-a/folder/file.xlsx',
+      sizeBytes: 1234,
+    }).success,
+    true,
+  )
+})
+
 test('S3FileClient putFile and getFile can be exercised with mocked transport', async () => {
-  const { S3FileClient } = await import('../dist/s3/client.js')
+  const { S3FileClient, readJsonMessageFromS3, writeJsonMessageToS3 } = await import(
+    '../dist/s3/client.js'
+  )
+  const { z } = await import('zod')
   const client = new S3FileClient({
     defaultBucketName: 'sample-bucket',
     region: 'us-east-1',
@@ -76,9 +104,12 @@ test('S3FileClient putFile and getFile can be exercised with mocked transport', 
       }
 
       if (command.constructor.name === 'GetObjectCommand') {
+        const key = command?.input?.Key
+        const bodyText = key === 'folder/message.json' ? '{"ok":"OK"}' : 'OK'
+
         return {
           Body: {
-            transformToByteArray: async () => Uint8Array.from([79, 75]),
+            transformToByteArray: async () => new TextEncoder().encode(bodyText),
           },
           ContentType: 'text/plain',
         }
@@ -109,6 +140,20 @@ test('S3FileClient putFile and getFile can be exercised with mocked transport', 
   assert.equal(getResult.contentType, 'text/plain')
   assert.equal(getResult.body.toString('utf8'), 'OK')
   assert.equal(sendCalls.length, 2)
+
+  const jsonWriteResult = await writeJsonMessageToS3(client, {
+    s3Key: 'folder/message.json',
+    value: { ok: true },
+  })
+
+  assert.equal(jsonWriteResult.storageUri, 's3://sample-bucket/folder/message.json')
+
+  const jsonReadResult = await readJsonMessageFromS3(client, {
+    storageUri: 's3://sample-bucket/folder/message.json',
+    schema: z.object({ ok: z.string() }),
+  })
+
+  assert.deepEqual(jsonReadResult, { ok: 'OK' })
 })
 
 test('mastra adapter returns a tool definition through the provided factory', async () => {
